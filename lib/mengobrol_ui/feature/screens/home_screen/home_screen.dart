@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mangochatapp/mengobrol_ui/feature/screens/chat_screen/chatpage.dart';
+import 'package:mangochatapp/mengobrol_ui/feature/screens/chat_screen/chat_screen.dart';
 import 'package:mangochatapp/mengobrol_ui/database.dart';
 import 'package:mangochatapp/mengobrol_ui/feature/screens/home_screen/widgets/home_screen_appbar.dart';
 import 'package:mangochatapp/mengobrol_ui/feature/screens/home_screen/widgets/home_screen_navigation_bar.dart';

@@ -1,9 +1,8 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mangochatapp/mengobrol_ui/database.dart';
-import 'package:mangochatapp/mengobrol_ui/feature/screens/chat_screen/chatpage.dart';
+import 'package:mangochatapp/mengobrol_ui/feature/screens/chat_screen/chat_screen.dart';
 
 import 'received_msg.dart';
 
