@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "528600756297",
+    "project_id": "chat-app-92800",
+    "storage_bucket": "chat-app-92800.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:528600756297:android:fbec40e85afb3badbfcf98",
+        "android_client_info": {
+          "package_name": "com.example.mangochatapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxCTmWd9K_UV8mH9XLcDNsiJCZhSEeNTU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
