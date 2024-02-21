@@ -8,11 +8,14 @@ import 'package:mangochatapp/feature/models/message_model.dart';
 class LeftSideMessages extends StatelessWidget {
   MessageModel msgModel;
   LeftSideMessages({super.key, required this.msgModel, required this.toId});
-String toId;
+  String toId;
   @override
   Widget build(BuildContext context) {
-    if(msgModel.readAt == null){
-          FirebaseProvider.updateReadMessage(msgId: msgModel.messageId, userId: FirebaseProvider.userId, toId:toId );
+    if (msgModel.readAt == null) {
+      FirebaseProvider.updateReadMessage(
+          msgId: msgModel.messageId,
+          userId: FirebaseProvider.userId,
+          toId: toId);
     }
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
@@ -29,11 +32,11 @@ String toId;
                     bottomRight: Radius.circular(12),
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12)),
-                color: Colors.grey.shade300),
+                color: UIColors.blueShade50),
             child: Text(
               msgModel.messsage.trim(),
-              style:
-                  TextStyle(fontWeight: FontWeight.w500, color: UIColors.black),
+              style: TextStyle(
+                  fontWeight: FontWeight.w500, color: UIColors.blueShade400),
             ),
           ),
         ),

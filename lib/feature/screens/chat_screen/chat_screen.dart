@@ -11,77 +11,72 @@ import 'package:mangochatapp/feature/screens/chat_screen/widgets/right_side_msg.
 
 import 'widgets/send_messages_textfield.dart';
 
-class ChatScreen extends StatefulWidget {
+class ChatScreen extends StatelessWidget {
   ChatScreen({super.key, required this.toId, required this.userModel});
   String toId;
   UserModel userModel;
-
-  @override
-  State<ChatScreen> createState() => _ChatScreenState();
-}
-
-class _ChatScreenState extends State<ChatScreen> {
   ScrollController scrollContoller = ScrollController();
-  // bool showSplash = false;
   @override
   Widget build(BuildContext context) {
+    print('Chat Screen build Called!!');
     return Scaffold(
-      backgroundColor: UIColors.greyShade100,
-      appBar: chatScreenAppBar(context, user: widget.userModel),
-      body: Column(
+      backgroundColor: UIColors.white,
+      appBar: chatScreenAppBar(context, toId: toId),
+      body: Stack(
         children: [
-          Expanded(
-            flex: 6,
-            child: StreamBuilder(
-              stream: FirebaseProvider.getAllMesage(
-                  toId: widget.toId,
-                  userID: FirebaseProvider.auth.currentUser!.uid),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Container(color: UIColors.greyShade100);
-                }
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  scrollContoller.animateTo(
-                    scrollContoller.position.maxScrollExtent,
-                    duration: Duration(milliseconds: 400),
-                    curve: Curves.fastOutSlowIn,
-                  );
-                });
-                return SingleChildScrollView(
-                  controller: scrollContoller,
-                  child: Container(
-                    padding: const EdgeInsets.all(7),
-                    child: Column(
-                      children: [
-                        ListView.builder(
-                          itemCount: snapshot.data!.docs.length,
-                          shrinkWrap: true,
-                          reverse: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            MessageModel eachMsg = MessageModel.fromDoc(
-                                snapshot.data!.docs[index].data());
-                            if (eachMsg.fromId == FirebaseProvider.userId) {
-                              return RightSideMessages(msgModel: eachMsg);
-                            } else {
-                              return LeftSideMessages(
-                                  msgModel: eachMsg, toId: widget.toId);
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
+          StreamBuilder(
+            stream: FirebaseProvider.getAllMesage(
+                toId: toId, userID: FirebaseProvider.auth.currentUser!.uid),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Container(
+                  color: UIColors.white,
                 );
-              },
-            ),
+              }
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                scrollContoller.animateTo(
+                  scrollContoller.position.maxScrollExtent,
+                  duration: Duration(milliseconds: 400),
+                  curve: Curves.fastOutSlowIn,
+                );
+              });
+              return SingleChildScrollView(
+                controller: scrollContoller,
+                child: Container(
+                  padding: const EdgeInsets.all(7),
+                  child: Column(
+                    children: [
+                      ListView.builder(
+                        itemCount: snapshot.data!.docs.length,
+                        shrinkWrap: true,
+                        reverse: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          MessageModel eachMsg = MessageModel.fromDoc(
+                              snapshot.data!.docs[index].data());
+
+                          if (eachMsg.fromId == FirebaseProvider.userId) {
+                            return RightSideMessages(msgModel: eachMsg);
+                          } else {
+                            return LeftSideMessages(
+                                msgModel: eachMsg, toId: toId);
+                          }
+                        },
+                      ),
+                      SizedBox(height: 70)
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
-          Expanded(flex: 1, child: SendMessageBar(toId: widget.toId))
+          SendMessageBar(userModel: userModel)
         ],
       ),
     );
   }
 }
+
 /*  Consumer<NewMsgSplashProvidewr>(
                           builder: (context, provider, child) {
                         return AnimatedOpacity(

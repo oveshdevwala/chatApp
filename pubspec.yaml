@@ -44,6 +44,15 @@ dependencies:
   card_loading: ^0.3.2
   sms_otp_auto_verify: ^2.1.0
   intl: ^0.19.0
+  image_picker: ^1.0.7
+  firebase_storage: ^11.6.5
+  image_cropper: ^5.0.1
+  firebase_messaging: ^14.7.15
+  http: ^1.2.0
+  lottie: ^3.0.0
+  country_picker: ^2.0.24
+  flutter_advanced_segment: ^3.0.2
+  flutter_contacts: ^1.1.7+1
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +80,8 @@ flutter:
   assets:
     - assets/profile/
     - assets/emoji/
+    - assets/lottie/
+    - assets/icons/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

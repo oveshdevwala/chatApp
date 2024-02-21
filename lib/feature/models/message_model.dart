@@ -12,6 +12,7 @@ class MessageModel {
   String? videoUrl;
   String? fileUrl;
   bool isDeleted;
+  ///bool
   int? reaction;
   String messageType;
 

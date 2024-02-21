@@ -4,45 +4,75 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mangochatapp/constrains/colors.dart';
 import 'package:mangochatapp/feature/state_manegment/screen_provider.dart';
-import 'package:mangochatapp/feature/screens/home_screen/widgets/new_chat_dialog_box.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreenNavigationBar extends StatefulWidget {
-  HomeScreenNavigationBar({super.key, required this.screenIndex});
-  int screenIndex;
-  @override
-  State<HomeScreenNavigationBar> createState() =>
-      _HomeScreenNavigationBarState();
-}
+class HomeScreenNavigationBar extends StatelessWidget {
+  HomeScreenNavigationBar({super.key});
 
-class _HomeScreenNavigationBarState extends State<HomeScreenNavigationBar> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ScreenProvider>(builder: (context, provider, child) {
       return BottomNavigationBar(
-          backgroundColor: UIColors.greyShade200,
+          iconSize: 30,
+          backgroundColor: UIColors.white,
           currentIndex: provider.screenIndex,
           onTap: (value) {
             provider.screenIndex = value;
-            widget.screenIndex = value;
-            setState(() {});
           },
+          elevation: 60,
           type: BottomNavigationBarType.fixed,
           showUnselectedLabels: false,
-          // showSelectedLabels: false,
-          selectedItemColor: Colors.black,
+          showSelectedLabels: true,
+          selectedLabelStyle:
+              TextStyle(color: UIColors.primary, fontWeight: FontWeight.bold),
+          selectedItemColor: UIColors.primary,
           items: [
             BottomNavigationBarItem(
                 activeIcon: Icon(
-                  CupertinoIcons.home,
-                  color: Colors.black,
+                  CupertinoIcons.chat_bubble_text_fill,
+                  color: UIColors.primary,
                 ),
                 icon: Icon(
-                  CupertinoIcons.home,
-                  color: Colors.grey,
+                  CupertinoIcons.chat_bubble_2,
+                  color: UIColors.grey,
                 ),
-                label: 'Home'),
+                label: 'Chats'),
             BottomNavigationBarItem(
+                activeIcon: Icon(
+                  CupertinoIcons.play_circle_fill,
+                  color: UIColors.primary,
+                ),
+                icon: Icon(
+                  CupertinoIcons.play_circle,
+                  color: UIColors.grey,
+                ),
+                label: 'Story'),
+            BottomNavigationBarItem(
+                activeIcon: Icon(
+                  CupertinoIcons.phone_fill,
+                  color: UIColors.primary,
+                ),
+                icon: Icon(
+                  CupertinoIcons.phone,
+                  color: UIColors.grey,
+                ),
+                label: 'Calls'),
+            BottomNavigationBarItem(
+                activeIcon: Icon(
+                  CupertinoIcons.person_fill,
+                  color: UIColors.primary,
+                ),
+                icon: Icon(
+                  CupertinoIcons.person,
+                  color: UIColors.grey,
+                ),
+                label: 'Account')
+          ]);
+    });
+  }
+}
+
+/** BottomNavigationBarItem(
                 label: 'newChat',
                 icon: ElevatedButton(
                     onPressed: () {
@@ -53,22 +83,8 @@ class _HomeScreenNavigationBarState extends State<HomeScreenNavigationBar> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15)),
                         foregroundColor: Colors.white,
-                        backgroundColor: Colors.black),
+                        backgroundColor: UIColors.white),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [Icon(Icons.add), Text('New Chat')],
-                    ))),
-            BottomNavigationBarItem(
-                activeIcon: Icon(
-                  CupertinoIcons.person,
-                  color: Colors.black,
-                ),
-                icon: Icon(
-                  CupertinoIcons.person,
-                  color: Colors.grey,
-                ),
-                label: 'profile')
-          ]);
-    });
-  }
-}
+                    ))), */

@@ -4,8 +4,9 @@ class UserModel {
   String? id;
   String? email;
   String? mobileNumber;
+  String? pushToken;
   String? profilePic;
-  String? lastMessage;
+  bool? notification;
   int? lastOnline;
   bool? isOnline = false;
   int? status = 1; // 1> Active, 2> inActive, 3>Suspended
@@ -16,10 +17,11 @@ class UserModel {
     required this.name,
     this.accountCreatedDate,
     this.lastOnline=0,
-    required this.id,
-     this.lastMessage,
+     this.id,
+     this.pushToken,
+     this.notification,
      this.email='',
-    required this.mobileNumber,
+     this.mobileNumber,
      this.profilePic,
      this.isOnline,
      this.status,
@@ -32,9 +34,10 @@ class UserModel {
       accountCreatedDate: doc['accountCreatedDate'],
         name: doc['name'],
         id: doc['id'],
-        lastMessage: doc['lastMessage'],
+        notification: doc['notification'],
         lastOnline: doc['lastOnline'],
         email: doc['email'],
+        pushToken: doc['pushToken'],
         mobileNumber: doc['mobileNumber'],
         profilePic: doc['profilePic'],
         isOnline: doc['isOnline'],
@@ -51,8 +54,9 @@ class UserModel {
       'mobileNumber': mobileNumber,
       'profilePic': profilePic,
       'isOnline': isOnline,
+      'pushToken': pushToken,
       'id':id,
-      'lastMessage':lastMessage,
+      'notification':notification,
       'status': status,
       'profilePicStatus': profilePicStatus,
       'whoCanMsgMe': whoCanMsgMe,

@@ -9,7 +9,7 @@ final class HomeScreenChatsInitial extends HomeScreenChatsState {}
 class HomeScreenLoadingState extends HomeScreenChatsState {}
 
 class HomeScreenLoadedState extends HomeScreenChatsState {
-  QuerySnapshot<Map<String, dynamic>> getUsers;
+  List<UserModel> getUsers;
   HomeScreenLoadedState({
     required this.getUsers,
   });

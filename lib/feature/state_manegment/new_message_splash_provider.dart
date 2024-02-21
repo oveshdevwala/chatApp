@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-class NewMsgSplashProvidewr extends ChangeNotifier {
+class ewMsgSplashProvidewr extends ChangeNotifier {
   bool _showSplash = false;
 
   set showSplash(value) {

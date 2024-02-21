@@ -1,9 +1,10 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mangochatapp/constrains/colors.dart';
 import 'package:mangochatapp/feature/models/message_model.dart';
+import 'package:mangochatapp/feature/screens/chat_screen/widgets/react_dialog_box.dart';
+import 'package:mangochatapp/feature/screens/chat_screen/widgets/read_recipt.dart';
 
 class RightSideMessages extends StatelessWidget {
   RightSideMessages({super.key, required this.msgModel});
@@ -16,13 +17,14 @@ class RightSideMessages extends StatelessWidget {
         .format(context)
         .toString();
 
-    String? readTime ;
+    String readTime = '';
+    print(readTime);
     if (msgModel.readAt != null) {
       readTime = TimeOfDay.fromDateTime(
               DateTime.fromMillisecondsSinceEpoch(msgModel.readAt!))
           .format(context)
           .toString();
-    } 
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
@@ -35,23 +37,28 @@ class RightSideMessages extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Container(
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      // border: Border.all(
-                      //     strokeAlign: 5, width: 1, color: UIColors.yellow),
-                      color: UIColors.yellowShade500,
-                      borderRadius: BorderRadius.only(
-                          bottomRight: Radius.zero,
-                          bottomLeft: Radius.circular(12),
-                          topLeft: Radius.circular(12),
-                          topRight: Radius.circular(12)),
-                    ),
-                    child: Text(
-                      '${msgModel.messsage}',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500, color: UIColors.black),
-                    )),
+                InkWell(
+                  onLongPress: () {
+                    reactDialogBox(context, msgModel: msgModel);
+                  },
+                  child: Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        // border: Border.all(
+                        //     strokeAlign: 5, width: 1, color: UIColors.yellow),
+                        color: UIColors.primary,
+                        borderRadius: BorderRadius.only(
+                            bottomRight: Radius.zero,
+                            bottomLeft: Radius.circular(12),
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12)),
+                      ),
+                      child: Text(
+                        '${msgModel.messsage}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, color: UIColors.white),
+                      )),
+                ),
                 SizedBox(height: 3),
                 Row(
                   children: [
@@ -61,31 +68,7 @@ class RightSideMessages extends StatelessWidget {
                       style: TextStyle(fontSize: 11),
                     ),
                     SizedBox(width: 5),
-                    msgModel.readAt == null
-                        ? AnimatedContainer(
-                            duration: Duration(milliseconds: 1000),
-                            curve: Curves.bounceInOut,
-                            child: Icon(
-                              Icons.done_all_rounded,
-                              size: 20,
-                              color: UIColors.greyShade400,
-                              shadows: [
-                                Shadow(color: UIColors.black, blurRadius: 1)
-                              ],
-                            ),
-                          )
-                        : AnimatedContainer(
-                            duration: Duration(milliseconds: 1000),
-                            curve: Curves.bounceOut,
-                            child: Icon(
-                              Icons.done_all_rounded,
-                              size: 20,
-                              shadows: [
-                                Shadow(color: UIColors.black, blurRadius: 1)
-                              ],
-                              color: UIColors.yellowShade800,
-                            ),
-                          )
+                    ReadRecipt(messageModel: msgModel),
                   ],
                 )
               ],

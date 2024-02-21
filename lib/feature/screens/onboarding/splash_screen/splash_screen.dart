@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:mangochatapp/constrains/app_routes/app_routes.dart';
-import 'package:mangochatapp/constrains/colors.dart';
 import 'package:mangochatapp/constrains/variables.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,7 +14,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  String navigatorRoute = AppRoutes.phoneNumberScreen;
+  String navigatorRoute = AppRoutes.loginScreen;
   @override
   void initState() {
     super.initState();
@@ -38,11 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text(
-          'Chat App',
-          style: TextStyle(
-              fontWeight: FontWeight.bold, color: UIColors.black, fontSize: 25),
-        ),
+        child: Lottie.asset('assets/lottie/splash.json', height: 250),
       ),
     );
   }

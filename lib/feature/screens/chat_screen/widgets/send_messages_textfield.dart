@@ -3,65 +3,73 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mangochatapp/constrains/colors.dart';
 import 'package:mangochatapp/datasource/remote/firebase/firebase_provider.dart';
+import 'package:mangochatapp/feature/models/user_model.dart';
 
 class SendMessageBar extends StatelessWidget {
-  SendMessageBar({super.key, required this.toId});
-  String toId;
+  SendMessageBar({super.key, required this.userModel});
+  UserModel userModel;
   var messageContoller = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: UIColors.greyShade200,
-      height: 90,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
-          children: [
-            Expanded(
-                flex: 1,
-                child: IconButton(
-                  onPressed: () {},
-                  highlightColor: UIColors.greyShade300,
-                  icon: Icon(
-                    CupertinoIcons.plus_circle,
-                    size: 40,
-                    color: UIColors.black,
-                  ),
-                )),
-            SizedBox(width: 5),
-            Expanded(
-              flex: 6,
-              child: TextField(
-                  controller: messageContoller,
-                  decoration: InputDecoration(
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          var msg = messageContoller.text;
-                          if (msg.isNotEmpty) {
-                            FirebaseProvider.updateLastMessage(
-                                toId: toId,
-                                message: messageContoller.text.toString());
-                            FirebaseProvider.sendTextMessage(
-                                message: messageContoller.text.toString(),
-                                toId: toId);
-                          }
-                        },
-                        splashRadius: 300,
-                        highlightColor: UIColors.greyShade300,
-                        icon: Icon(Icons.send_rounded,
-                            color: UIColors.black, size: 30),
-                      ),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide.none),
-                      fillColor: UIColors.greyShade300,
-                      filled: true,
-                      hintText: 'Type Message',
-                      hintStyle: TextStyle(color: Colors.black))),
-            ),
-          ],
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        color: UIColors.primary,
+        height: 70,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Row(
+            children: [
+              Expanded(
+                  flex: 1,
+                  child: IconButton(
+                    onPressed: () {
+                      var msg = messageContoller.text;
+                      if (msg.isNotEmpty) {
+                        FirebaseProvider.sendTextMessage(
+                            message: messageContoller.text.toString(),
+                            userModel: userModel);
+                      }
+                    },
+                    style: IconButton.styleFrom(
+                      padding: EdgeInsets.all(0),
+                    ),
+                    icon: Icon(
+                      CupertinoIcons.add_circled,
+                      size: 40,
+                      color: UIColors.white,
+                    ),
+                  )),
+              SizedBox(width: 5),
+              Expanded(
+                flex: 6,
+                child: TextField(
+                    controller: messageContoller,
+                    decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                          onPressed: () async {
+                            var msg = messageContoller.text;
+                            if (msg.isNotEmpty) {
+                              FirebaseProvider.sendTextMessage(
+                                  message: messageContoller.text.toString(),
+                                  userModel: userModel);
+                            }
+                          },
+                          icon: Icon(Icons.send_rounded,
+                              color: UIColors.primary, size: 30),
+                        ),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide.none),
+                        fillColor: UIColors.greyShade100,
+                        filled: true,
+                        hintText: 'Type Message',
+                        hintStyle: TextStyle(color: UIColors.primary))),
+              ),
+            ],
+          ),
         ),
       ),
     );

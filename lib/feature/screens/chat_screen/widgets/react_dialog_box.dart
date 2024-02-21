@@ -1,53 +1,40 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mangochatapp/constrains/colors.dart';
+import 'package:mangochatapp/constrains/time/time_formater.dart';
 import 'package:mangochatapp/datasource/local/database.dart';
+import 'package:mangochatapp/feature/models/message_model.dart';
 
-reactDialogBox(context, {required String message}) {
+reactDialogBox(context, {required MessageModel msgModel}) {
   showGeneralDialog(
     barrierDismissible: true,
     barrierLabel: '',
     context: context,
     pageBuilder: (_, __, ___) {
       return Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Center(
-            child: AnimatedContainer(
-              duration: Duration(seconds: 3),
-              alignment: Alignment.bottomCenter,
-              margin: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-              padding: EdgeInsets.all(10),
-              child: Material(
-                color: Colors.transparent,
-                child: Column(
-                  children: [
-                    Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(horizontal: 15),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Column(
-                          children: [
-                            SizedBox(height: 5),
-                            myDivider(),
-                            SizedBox(height: 7),
-                            reactedMsg(message),
-                            SizedBox(height: 10),
-                            reactIconButtons(),
-                            SizedBox(height: 15),
-                            MsgCopyButton(),
-                            SizedBox(height: 20),
-                            msgReplayButton(),
-                            SizedBox(height: 20),
-                            msgForwardButton(),
-                            SizedBox(height: 20),
-                            msgDeleteButton(),
-                            SizedBox(height: 20)
-                          ],
-                        )),
-                  ],
-                ),
+          Padding(
+            padding: const EdgeInsets.all(15),
+            child: Material(
+              color: Colors.transparent,
+              child: Column(
+                children: [
+                  Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                          border: Border.all(),
+                          color: UIColors.blueShade300,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Column(
+                        children: [
+                          ReadUnreadContainer(msgModel: msgModel),
+                        ],
+                      )),
+                ],
               ),
             ),
           ),
@@ -56,6 +43,108 @@ reactDialogBox(context, {required String message}) {
     },
   );
 }
+
+class ReadUnreadContainer extends StatelessWidget {
+  ReadUnreadContainer({
+    super.key,
+    required this.msgModel,
+  });
+  MessageModel msgModel;
+  @override
+  Widget build(BuildContext context) {
+    var read = '- - - -';
+    if (msgModel.readAt != null) {
+      read = "${getFormatedTime(msgModel.readAt!.toString(), context)}";
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  backgroundColor: UIColors.blueShade200,
+                  radius: 9,
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 1000),
+                    curve: Curves.bounceInOut,
+                    child: Icon(
+                      Icons.done_all_rounded,
+                      size: 20,
+                      color: UIColors.white,
+                      // shadows: [Shadow(color: UIColors.black, blurRadius: 0)],
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                Text(
+                  'Send',
+                  style: TextStyle(color: UIColors.white),
+                ),
+              ],
+            ),
+            Text(
+              getFormatedTime(msgModel.sendAt.toString(), context),
+              style: TextStyle(color: UIColors.white),
+            )
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                msgModel.readAt != null
+                    ? CircleAvatar(
+                        backgroundColor: UIColors.blueShade200,
+                        radius: 9,
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 1000),
+                          curve: Curves.bounceInOut,
+                          child: Icon(
+                            Icons.done_all_rounded,
+                            size: 20,
+                            color: UIColors.blueShade600,
+                            // shadows: [Shadow(color: UIColors.black, blurRadius: 0)],
+                          ),
+                        ))
+                    : SizedBox(),
+                SizedBox(width: 10),
+                Text(
+                  'Read',
+                  style: TextStyle(color: UIColors.white),
+                ),
+              ],
+            ),
+            Text(
+              read,
+              style: TextStyle(color: UIColors.white),
+            )
+          ],
+        ),
+      ],
+    );
+  }
+}
+// SizedBox(height: 5),
+//                           myDivider(),
+//                           SizedBox(height: 7),
+//                           reactedMsg(msgModel.messsage),
+//                           SizedBox(height: 10),
+//                           reactIconButtons(),
+//                           SizedBox(height: 15),
+//                           MsgCopyButton(),
+//                           SizedBox(height: 20),
+//                           msgReplayButton(),
+//                           SizedBox(height: 20),
+//                           msgForwardButton(),
+//                           SizedBox(height: 20),
+//                           msgDeleteButton(),
+//                           SizedBox(height: 20)
 
 Row msgDeleteButton() {
   return Row(

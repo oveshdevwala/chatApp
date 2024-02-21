@@ -1,83 +1,92 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:mangochatapp/constrains/app_routes/app_routes.dart';
 import 'package:mangochatapp/constrains/variables.dart';
+import 'package:mangochatapp/datasource/remote/firebase_notification_services/push_notification_services.dart';
 import 'package:mangochatapp/feature/models/message_model.dart';
 import 'package:mangochatapp/feature/models/user_model.dart';
 import 'package:mangochatapp/feature/screens/onboarding/otp_screen/otp_screen.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FirebaseProvider {
   static final fireStore = FirebaseFirestore.instance;
   static final auth = FirebaseAuth.instance;
+  static final storage = FirebaseStorage.instance.ref();
   static final phoneAuth = PhoneAuthProvider;
 
   static final userCollection = 'users';
   static final chatCollation = 'chats';
   static final messageCollation = 'messages';
   static String userId = auth.currentUser!.uid;
-  createUser({
-    required UserModel mUserModel,
-    required String pass,
-  }) async {
-    try {
-      var credentials = await auth.createUserWithEmailAndPassword(
-        email: mUserModel.email.toString(),
-        password: pass,
-      );
-      var uId = credentials.user!.uid;
-      if (credentials.user != null) {
-        fireStore
-            .collection(userCollection)
-            .doc(uId)
-            .set(mUserModel.toDoc())
-            .then((value) async {
-          var prefs = await SharedPreferences.getInstance();
-          prefs.setString(LoginPrefKey, uId);
-        }).onError((e, stackTrace) {
-          print(e.toString());
-          throw Exception("Error : $e");
-        });
-        ;
-      }
-    } on FirebaseAuthException catch (e) {
-      print(e.toString());
-      throw Exception("Error : $e");
-    }
-  }
+  // createUser({
+  //   required UserModel mUserModel,
+  //   required String pass,
+  // }) async {
+  //   try {
+  //     var credentials = await auth.createUserWithEmailAndPassword(
+  //       email: mUserModel.email.toString(),
+  //       password: pass,
+  //     );
+  //     var uId = credentials.user!.uid;
+  //     if (credentials.user != null) {
+  //       fireStore
+  //           .collection(userCollection)
+  //           .doc(uId)
+  //           .set(mUserModel.toDoc())
+  //           .then((value) async {
+  //         var prefs = await SharedPreferences.getInstance();
+  //         prefs.setString(LoginPrefKey, uId);
+  //       }).onError((e, stackTrace) {
+  //         print(e.toString());
+  //         throw Exception("Error : $e");
+  //       });
+  //       ;
+  //     }
+  //   } on FirebaseAuthException catch (e) {
+  //     print(e.toString());
+  //     throw Exception("Error : $e");
+  //   }
+  // }
 
-  signInuser({required String email, required String password}) async {
-    try {
-      await auth
-          .signInWithEmailAndPassword(email: email, password: password)
-          .then((value) async {
-        var prefs = await SharedPreferences.getInstance();
-        prefs.setString(LoginPrefKey, value.user!.uid);
-      }).onError((e, stackTrace) {
-        print('login Error${e.toString()}');
-        throw Exception("Error : $e");
-      });
-    } on FirebaseAuthException catch (e) {
-      print(e.toString());
-      throw Exception("Error : $e");
-    }
-  }
+  // signInuser({required String email, required String password}) async {
+  //   try {
+  //     await auth
+  //         .signInWithEmailAndPassword(email: email, password: password)
+  //         .then((value) async {
+  //       var prefs = await SharedPreferences.getInstance();
+  //       prefs.setString(LoginPrefKey, value.user!.uid);
+  //     }).onError((e, stackTrace) {
+  //       print('login Error${e.toString()}');
+  //       throw Exception("Error : $e");
+  //     });
+  //   } on FirebaseAuthException catch (e) {
+  //     print(e.toString());
+  //     throw Exception("Error : $e");
+  //   }
+  // }
 
   verifyPhoneNumber(
       {required String phoneNumber, required BuildContext context}) async {
     try {
       await auth.verifyPhoneNumber(
-        phoneNumber: "+91$phoneNumber",
+        phoneNumber: phoneNumber,
         verificationCompleted: (PhoneAuthCredential phoneAuthCredential) {},
         verificationFailed: (FirebaseAuthException e) {
-          throw Exception(e);
+          throw Exception(e.message);
         },
         codeSent: (String verificationId, int? forceResendingToken) {
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => OTPScreeen(verifyId: verificationId),
+                builder: (context) => OTPVerifyScreen(
+                  verifyId: verificationId,
+                  phoneNumber: phoneNumber,
+                ),
               ));
         },
         codeAutoRetrievalTimeout: (verificationId) {},
@@ -96,7 +105,6 @@ class FirebaseProvider {
       required String otp,
       required String number,
       required String userName,
-      required String emailContoller,
       required BuildContext context}) async {
     var credential = PhoneAuthProvider.credential(
       verificationId: verifyId,
@@ -109,12 +117,14 @@ class FirebaseProvider {
         if (value.additionalUserInfo!.isNewUser) {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text('Succesfully')));
-
           var currentTime = DateTime.now().millisecondsSinceEpoch.toString();
-          var mUserModel = UserModel(
+          var mUserModel = await UserModel(
               name: userName,
               id: uId,
-              email: emailContoller,
+              isOnline: true,
+              notification: true,
+              lastOnline: int.parse(currentTime),
+              pushToken: null,
               mobileNumber: number,
               accountCreatedDate: currentTime);
           await fireStore
@@ -125,7 +135,12 @@ class FirebaseProvider {
         }
         var prefs = await SharedPreferences.getInstance();
         prefs.setString(LoginPrefKey, uId);
-        Navigator.pushReplacementNamed(context, AppRoutes.appHomeScreen);
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder: (context) => Scaffold(),
+        //     ));
+        Navigator.pushReplacementNamed(context, AppRoutes.landingScreen);
       });
     } on FirebaseAuthException catch (e) {
       throw Exception(e);
@@ -150,15 +165,9 @@ class FirebaseProvider {
     }
   }
 
-  Future<QuerySnapshot<Map<String, dynamic>>> getHomeScreenUsers() {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getHomeScreenUsers() {
     try {
-      var users = fireStore
-          .collection(userCollection)
-          .get()
-          .onError((error, stackTrace) {
-        throw Exception('Error : $error');
-      });
-      ;
+      var users = fireStore.collection(userCollection).snapshots();
       return users;
     } on FirebaseAuthException catch (e) {
       throw Exception('Error : $e');
@@ -173,26 +182,42 @@ class FirebaseProvider {
     }
   }
 
-  static sendTextMessage({required String message, required String toId}) {
+  static sendTextMessage(
+      {required String message, required UserModel userModel}) async {
     var currentTime = DateTime.now().millisecondsSinceEpoch;
-    var chatId = getChatId(fromId: userId, toId: toId);
-
-    print('Current User Id : $userId');
-    print(" Chat Room Id :$chatId");
+    var chatId = getChatId(fromId: userId, toId: userModel.id!);
     var messageModel = MessageModel(
       messsage: message,
       sendAt: currentTime,
       messageId: currentTime.toString(),
       fromId: userId,
-      toId: toId,
+      toId: userModel.id!,
     );
-    print(messageModel.toDoc());
+
     fireStore
         .collection(chatCollation)
         .doc(chatId)
         .collection(messageCollation)
         .doc(currentTime.toString())
-        .set(messageModel.toDoc());
+        .set(messageModel.toDoc())
+        .then((value) {
+      FireNotification.sendPushNotification(user: userModel, message: message);
+      //  fireStore
+      // .collection(userCollection)
+      // .doc('chatedUserId').set({'chatedUserId':userModel.id});
+    });
+
+    // fireStore
+    //     .collection(userCollection)
+    //     .doc(userId)
+    //     .collection('chateduser')
+    //     .doc(chatId)
+    //     .set({'chatedUser': toId, 'chatId': chatId});
+  }
+
+  static Stream<DocumentSnapshot<Map<String, dynamic>>> getUserProfileData(
+      userId) {
+    return fireStore.collection(userCollection).doc(userId).snapshots();
   }
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMesage(
@@ -204,6 +229,44 @@ class FirebaseProvider {
         .collection(messageCollation)
         .orderBy('sendAt', descending: true)
         .snapshots();
+  }
+
+// Future<List<UserModel>>
+  static Future<List<UserModel>> getAllMesageTest(
+      {String? toId, String? userID}) async {
+    List<UserModel> chatedUserss = [];
+    print('Called But Error in fetch');
+    await fireStore
+        .collection(userCollection)
+        .snapshots()
+        .forEach((event) async {
+      for (var user in event.docs) {
+        var userModel = UserModel.fromDoc(user.data());
+        var chatId = getChatId(fromId: userModel.id!, toId: userId);
+        var chats = await fireStore
+            .collection(chatCollation)
+            .doc(chatId)
+            .collection(messageCollation).doc()
+            .snapshots().forEach((element)async {
+        var msgModel = MessageModel.fromDoc(element.data()!);
+        print("MessageId : ${msgModel.fromId}${msgModel.toId}");
+        print("MessageId : Nulll");
+        var userget = await getUserById(msgModel.toId);
+        var userGetModel = UserModel.fromDoc(userget.data()!);
+        chatedUserss.add(userGetModel);
+            });
+
+      }
+    });
+
+    return await chatedUserss;
+  }
+
+  static updateNoticiationStatus({required bool value, required String toId}) {
+    fireStore
+        .collection(userCollection)
+        .doc(toId)
+        .update({'notification': value});
   }
 
   static updateReadMessage(
@@ -220,34 +283,100 @@ class FirebaseProvider {
         .update({"readAt": currentTime});
   }
 
-  static UpdateUserOnline() async {
-    await fireStore
+  static UpdateUserOnline() {
+    fireStore.collection(userCollection).doc(userId).update({'isOnline': true});
+  }
+
+  static updatePushToken() {
+    fireStore
         .collection(userCollection)
         .doc(userId)
-        .update({'isOnline': true});
+        .update({'pushToken': FireNotification.fCMToken});
   }
 
   static UpdateUserOffline() async {
     var currentTime = DateTime.now().millisecondsSinceEpoch;
-    var userField = fireStore.collection(userCollection).doc(userId);
-    userField.update({'lastOnline': currentTime});
-    userField.update({'isOnline': false});
+    fireStore.collection(userCollection).doc(userId).update({
+      'lastOnline': currentTime,
+      'isOnline': false,
+    });
   }
 
-  static updateLastMessage(
-      {required String toId, required String message}) async {
-    await fireStore
-        .collection(userCollection)
-        .doc(toId)
-        .update({'lastMessage': message});
-  }
-
-  static String getUnreadCount({required String toId}) {
+  static getLastMessage({required String toId}) {
     var chatId = getChatId(fromId: userId, toId: toId);
- return   fireStore
+    return fireStore
         .collection(chatCollation)
         .doc(chatId)
         .collection(messageCollation)
-        .where('readAt', whereIn: null).count().toString();
+        .orderBy('sendAt', descending: true)
+        .limit(1)
+        .snapshots();
+  }
+
+  static nowUpdateLastMessage(
+      {required String lastMessage, required String toId}) {
+    fireStore
+        .collection(userCollection)
+        .doc(toId)
+        .update({'lastMessage': lastMessage});
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getUnreadCount(
+      {required String toId}) {
+    var chatId = getChatId(fromId: userId, toId: toId);
+    return fireStore
+        .collection(chatCollation)
+        .doc(chatId)
+        .collection(messageCollation)
+        .where('readAt', isNull: true)
+        .where('fromId', isEqualTo: toId)
+        .snapshots();
+  }
+
+  static uploadProfilePicture(
+      {required File? profileFile, required BuildContext context}) {
+    var bucket = storage
+        .child('Users')
+        .child('profile')
+        .child('${userId}_profile_pic.jpg ');
+    try {
+      if (profileFile != null) {
+        bucket.putFile(profileFile).then((value) async {
+          String profileUrl = await value.ref.getDownloadURL();
+          fireStore
+              .collection(userCollection)
+              .doc(userId)
+              .update({'profilePic': profileUrl});
+        });
+      }
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error : $e')));
+    }
+  }
+
+  static UpdateProfileData({
+    required String email,
+    required String userName,
+  }) {
+    fireStore
+        .collection(userCollection)
+        .doc(userId)
+        .update({'email': email, 'name': userName});
+  }
+
+  static Future<DocumentSnapshot<Map<String, dynamic>>> getUserById(
+      String documentId) async {
+    return FirebaseFirestore.instance
+        .collection(userCollection)
+        .doc(documentId)
+        .get();
+  }
+
+
+
+  static getAllMesageTest2()  {
+
+    
   }
 }

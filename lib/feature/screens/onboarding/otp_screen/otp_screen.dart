@@ -2,107 +2,92 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:mangochatapp/constrains/colors.dart';
-import 'package:mangochatapp/feature/screens/onboarding/widgets/my_onboaring_title.dart';
-import 'package:mangochatapp/feature/screens/onboarding/widgets/my_submit_elevated_button.dart';
-import 'package:mangochatapp/feature/state_manegment/onboarding_bloc/onboarding_bloc.dart';
-import 'package:mangochatapp/feature/state_manegment/phonenumber_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:mangochatapp/constrains/widget/primary_elevated_button.dart';
+import 'package:mangochatapp/feature/state_manegment/login_screen/otp_verify/onboarding_bloc/onboarding_bloc.dart';
 import 'package:sms_otp_auto_verify/sms_otp_auto_verify.dart';
 
-class OTPScreeen extends StatefulWidget {
-  OTPScreeen({super.key, required this.verifyId});
+class OTPVerifyScreen extends StatefulWidget {
+  OTPVerifyScreen(
+      {super.key, required this.phoneNumber, required this.verifyId});
+  String phoneNumber;
   String verifyId;
+
   @override
-  State<OTPScreeen> createState() => _OTPScreeenState();
+  State<OTPVerifyScreen> createState() => _OTPVerifyScreenState();
 }
 
-class _OTPScreeenState extends State<OTPScreeen> {
+class _OTPVerifyScreenState extends State<OTPVerifyScreen> {
   var otpContoller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    var mq = MediaQuery.of(context).size;
     return Scaffold(
-      body: Card(
-        color: UIColors.yellowShade100,
-        child: Flexible(
-          flex: 10,
-          child: Consumer<PhoneNumberProvider>(
-              builder: (context, provider, child) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                MyOnboardingTitle('Enter OTP'),
-                SizedBox(height: 20),
-                TextFieldPin(
-                  textController: otpContoller,
-                  autoFocus: true,
-                  codeLength: 6,
-                  selectedDecoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: UIColors.black)),
-                  alignment: MainAxisAlignment.center,
-                  defaultBoxSize: 50.0,
-                  margin: 2,
-                  selectedBoxSize: 46.0,
-                  textStyle: TextStyle(fontSize: 16),
-                  defaultDecoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: UIColors.black)),
-                  onChange: (code) {
-                    otpContoller.text = code;
-
-                    setState(() {});
-                  },
-                ),
-                BlocConsumer<OnBoardingBloc, OnBoardingState>(
-                  listener: (context, state) {
-                    // if (state is OnBoardingLoadedState) {
-                    //   Navigator.pushNamed(context, AppRoutes.appHomeScreen);
-                    // }
-
-                    // if (state is OnBoardingErrorState) {
-                    //   ScaffoldMessenger.of(context)
-                    //       .showSnackBar(SnackBar(content: Text(state.errorMsg)));
-                    // }
-                  },
-                  builder: (context, state) {
-                    if (state is OnBoardingLoadingState) {
-                      return SizedBox(
-                          width: mq.width * .8,
-                          child: MySubmitElevatedButton(
-                              btName: '',
-                              myChild: LinearProgressIndicator(
-                                color: UIColors.black,
-                              ),
-                              onTap: () {}));
-                    }
-                    return SizedBox(
-                        width: mq.width * .8,
-                        child: MySubmitElevatedButton(
-                            btName: 'Submit OTP',
-                            onTap: () {
-                              var number = provider.numberController.text;
-                              var userName = provider.userNameController.text;
-                              var email = provider.emailController.text;
-                              context.read<OnBoardingBloc>().add(
-                                  MobileCheckCrediential(
-                                    emailNumber: email,
-                                    
-                                      phoneNumber: number.trim().toString(),
-                                      userNameProvider:
-                                          userName.trim().toString(),
-                                      otp: otpContoller.text.trim().toString(),
-                                      verifyId: widget.verifyId,
-                                      context: context));
-                            }));
-                  },
-                )
-              ],
-            );
-          }),
-        ),
+      backgroundColor: UIColors.white,
+      body: Column(
+        children: [
+          Spacer(),
+          Text(
+            'Verify Phone',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          // SizedBox(height: 10),
+          Text(
+            'Code has been sent to ${widget.phoneNumber} ',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+          ),
+          Lottie.asset('assets/lottie/otp_screen.json', height: 200),
+          SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            child: TextFieldPin(
+              textController: otpContoller,
+              autoFocus: true,
+              codeLength: 6,
+              selectedDecoration: BoxDecoration(
+                color: UIColors.primary,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              alignment: MainAxisAlignment.center,
+              defaultBoxSize: 48.0,
+              margin: 2,
+              selectedBoxSize: 52.0,
+              textStyle: TextStyle(
+                  fontSize: 20,
+                  color: UIColors.white,
+                  fontWeight: FontWeight.bold),
+              defaultDecoration: BoxDecoration(
+                color: UIColors.greyShade200,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              onChange: (code) {
+                otpContoller.text = code;
+                setState(() {});
+              },
+            ),
+          ),
+          Text('Didn\'t get OTP Code?',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, color: UIColors.black)),
+          Text('Resend Code',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, color: UIColors.primary)),
+          Spacer(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: PrimaryElevatedButton(
+                btName: 'Verify',
+                onTap: () {
+                  context.read<OnBoardingBloc>().add(MobileCheckCrediential(
+                      otp: otpContoller.text,
+                      phoneNumber: widget.phoneNumber,
+                      userNameProvider: 'Shaikh',
+                      verifyId: widget.verifyId,
+                      context: context));
+                }),
+          )
+        ],
       ),
     );
   }
