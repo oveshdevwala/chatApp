@@ -223,6 +223,10 @@ class FirebaseProvider {
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMesage(
       {required String toId, required String userID}) {
     var chatId = getChatId(fromId: userID, toId: toId);
+
+    fireStore.collection(chatCollation).doc(chatId).set({
+      'ids': [userID, toId]
+    });
     return fireStore
         .collection(chatCollation)
         .doc(chatId)
@@ -246,16 +250,17 @@ class FirebaseProvider {
         var chats = await fireStore
             .collection(chatCollation)
             .doc(chatId)
-            .collection(messageCollation).doc()
-            .snapshots().forEach((element)async {
-        var msgModel = MessageModel.fromDoc(element.data()!);
-        print("MessageId : ${msgModel.fromId}${msgModel.toId}");
-        print("MessageId : Nulll");
-        var userget = await getUserById(msgModel.toId);
-        var userGetModel = UserModel.fromDoc(userget.data()!);
-        chatedUserss.add(userGetModel);
-            });
-
+            .collection(messageCollation)
+            .doc()
+            .snapshots()
+            .forEach((element) async {
+          var msgModel = MessageModel.fromDoc(element.data()!);
+          print("MessageId : ${msgModel.fromId}${msgModel.toId}");
+          print("MessageId : Nulll");
+          var userget = await getUserById(msgModel.toId);
+          var userGetModel = UserModel.fromDoc(userget.data()!);
+          chatedUserss.add(userGetModel);
+        });
       }
     });
 
@@ -373,10 +378,34 @@ class FirebaseProvider {
         .get();
   }
 
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMesageTest2() {
+    return fireStore
+        .collection(userCollection)
+        .where('id', isEqualTo: auth.currentUser!.uid)
+        .snapshots();
+  }
 
+  static Future<QuerySnapshot<Map<String, dynamic>>> getAllMesageTest3() {
+    return fireStore.collection(chatCollation).get();
+  }
+    static Stream<QuerySnapshot<Map<String, dynamic>>> getUserByFromIdAndToId(
+      List<String> chatedIds)  {
 
-  static getAllMesageTest2()  {
-
-    
+    return FirebaseFirestore.instance
+        .collection(userCollection)
+        .where(FieldPath.documentId,whereIn:chatedIds )
+        .snapshots();
   }
 }
+/**   for (var chats in event.docs) {
+        var msgModel = MessageModel.fromDoc(chats.data());
+        if (msgModel.fromId == userId) {
+          userIds.add(msgModel.fromId);
+          print(msgModel.fromId);
+        } else if (msgModel.toId == userId) {
+          userIds.add(msgModel.toId);
+          print(msgModel.toId);
+        } else {
+          print('Ids Not Matched');
+        }
+      } */

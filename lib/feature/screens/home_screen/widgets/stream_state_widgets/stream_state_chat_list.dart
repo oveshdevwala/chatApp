@@ -98,28 +98,16 @@ class StreamStateChatList extends StatelessWidget {
   AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot;
   @override
   Widget build(BuildContext context) {
-    print('Chat Home screen uild function called!!!');
-    // print('${snapshot.data!.docs[0].data()['toId']}');
-    List<String> myUserIds = [];
-    for (int i = 0; i < snapshot.data!.docs.length; i++) {
-      // UserModel user = UserModel.fromDoc(snapshot.data!.docs[i].data());
-      // if (snapshot.data!.docs[i].id != FirebaseProvider.userId ) {
-      // myUserIds.add(
-      //     MessageModel.fromDoc(snapshot.data!.docs[i].data()).toId.toString());
-      myUserIds
-          .add(UserModel.fromDoc(snapshot.data!.docs[i].data()).id.toString());
-      // }
-      print('Filtared User Id :${myUserIds[0]}');
-    }
-  
     return ListView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
-      itemCount: myUserIds.length,
+      itemCount: snapshot.data!.docs.length,
       itemBuilder: (context, index) {
-        print('Filtared User Id :${myUserIds[0]}');
+        var chatedModel = UserModel.fromDoc(snapshot.data!.docs[index].data());
+
         return ListTile(
-          title: Text(myUserIds[index]),
+          title: Text(chatedModel.name),
+          subtitle: Text(chatedModel.mobileNumber!),
         );
       },
     );

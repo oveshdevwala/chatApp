@@ -9,6 +9,8 @@ import 'package:mangochatapp/datasource/remote/firebase_notification_services/pu
 import 'package:mangochatapp/feature/models/message_model.dart';
 import 'package:mangochatapp/feature/models/user_model.dart';
 import 'package:mangochatapp/feature/screens/home_screen/widgets/home_screen_navigation_bar.dart';
+import 'package:mangochatapp/feature/screens/home_screen/widgets/stream_state_widgets/error_state_chat_list.dart';
+import 'package:mangochatapp/feature/screens/home_screen/widgets/stream_state_widgets/stream_state_chat_list.dart';
 import 'package:mangochatapp/feature/state_manegment/screen_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -120,30 +122,94 @@ class HomeScreen extends StatelessWidget {
           //     );
           //   },
           // )
-          // StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-          //   stream: FirebaseProvider.getOnlyChatedUser(),
-          //   builder: (context, snapshot) {
-          //     if (snapshot.hasError) {
-          //       return ErrorStateChatList(
-          //         error: snapshot.error.toString(),
-          //       );
-          //     }
-          //     if (snapshot.hasData) {
-          //       print(
-          //           'Filtared User Id :${snapshot.data!.docs[0].data()['id']}');
-          //       return StreamStateChatList(
-          //         snapshot: snapshot,
-          //       );
-          //     }
-          //     return SizedBox();
-          //   },
-          // )
+          FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+            future: FirebaseProvider.getAllMesageTest3(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return ErrorStateChatList(
+                  error: snapshot.error.toString(),
+                );
+              }
+              if (snapshot.hasData) {
+                if (snapshot.data!.docs.isNotEmpty) {
+                  // var datamode=
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      var fromId = snapshot.data!.docs[index].data()['ids'][0];
+                      var toId = snapshot.data!.docs[index].data()['ids'][1];
+
+                      List<String> ChatedUserId = [];
+                      if (fromId == FirebaseProvider.userId) {
+                        ChatedUserId.add(toId);
+                      }
+                      if (toId == FirebaseProvider.userId) {
+                        ChatedUserId.add(fromId);
+                      }
+                      return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                          stream: FirebaseProvider.getUserByFromIdAndToId(
+                              ChatedUserId),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: snapshot.data!.docs.length,
+                                itemBuilder: (context, index) {
+                                  var userModel = UserModel.fromDoc(
+                                      snapshot.data!.docs[index].data());
+                                  return ListTile(
+                                    title: Text(userModel.name),
+                                    subtitle: Text(userModel.mobileNumber!),
+                                  );
+                                },
+                              );
+                            } else if (snapshot.hasError) {
+                              return Center(child: LinearProgressIndicator());
+                            }
+                            return CircularProgressIndicator();
+                          });
+                    },
+                  );
+                } else {
+                  return ListTile(
+                    title: Text('No Data Found'),
+                  );
+                }
+              }
+              return SizedBox();
+            },
+          )
         ],
       ),
     );
   }
 }
 
+/**   StreamBuilder<QuerySnapshot<Map<String, dynamic>>> (
+            stream: FirebaseProvider.getAllMesageTest2(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return ErrorStateChatList(
+                  error: snapshot.error.toString(),
+                );
+              }
+              if (snapshot.hasData) {
+                if (snapshot.data!.docs.isNotEmpty) {
+                  return StreamStateChatList(
+                    snapshot: snapshot,
+                  );
+                } else {
+                 return ListTile(
+                    title: Text('No Data Found'),
+                  );
+                }
+              }
+              return SizedBox();
+            },
+          ) */
 class chatSegment extends StatelessWidget {
   const chatSegment({
     super.key,
