@@ -53,6 +53,7 @@ class SendMessageBar extends StatelessWidget {
                               FirebaseProvider.sendTextMessage(
                                   message: messageContoller.text.toString(),
                                   userModel: userModel);
+                              messageContoller.clear();
                             }
                           },
                           icon: Icon(Icons.send_rounded,

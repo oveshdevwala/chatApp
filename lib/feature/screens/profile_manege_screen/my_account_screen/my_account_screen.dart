@@ -80,8 +80,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                 FirebaseProvider.UpdateProfileData(
                                     email: email.trim().toString(),
                                     userName: userName.trim().toString());
-                                Navigator.pop(context);
                               }
+                              Navigator.pop(context);
                               context
                                   .read<CurrentProfilePictureProvider>()
                                   .uploadProfileFile(context);

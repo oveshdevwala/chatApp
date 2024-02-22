@@ -6,6 +6,7 @@ import 'package:mangochatapp/constrains/colors.dart';
 import 'package:mangochatapp/datasource/remote/firebase/firebase_provider.dart';
 import 'package:mangochatapp/feature/models/message_model.dart';
 import 'package:mangochatapp/feature/screens/chat_screen/widgets/read_recipt.dart';
+
 class lastMessage extends StatelessWidget {
   lastMessage({super.key, required this.toId});
   String toId;
@@ -25,12 +26,12 @@ class lastMessage extends StatelessWidget {
                       Flexible(
                         child: Text(
                           message.messsage,
-                          // maxLines: 1,
+                          maxLines: 1,
                           softWrap: true,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                               fontSize: 11,
-                              color: UIColors.greyShade200,
+                              color: UIColors.greyShade500,
                               fontWeight: FontWeight.w500),
                         ),
                       ),
@@ -44,7 +45,7 @@ class lastMessage extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                           fontSize: 11,
-                          color: UIColors.greyShade200,
+                          color: UIColors.greyShade500,
                           fontWeight: FontWeight.w500),
                     ),
                   );

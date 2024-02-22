@@ -13,6 +13,7 @@ class MyChatTile extends StatelessWidget {
     this.profile,
     // this.time,
     required this.onTap,
+     this.onLongPress,
   });
   String userName;
   Widget? lastMsg;
@@ -21,12 +22,14 @@ class MyChatTile extends StatelessWidget {
   Widget? unReadMsg;
   // String? time;
   VoidCallback onTap;
+  VoidCallback? onLongPress;
   Widget? profile;
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: ListTile(
+        onLongPress: onLongPress,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
           // side: BorderSide(color: UIColors.blueShade300, width: 2)

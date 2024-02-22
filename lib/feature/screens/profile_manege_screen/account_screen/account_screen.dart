@@ -3,6 +3,7 @@
 import 'package:card_loading/card_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mangochatapp/constrains/colors.dart';
 import 'package:mangochatapp/constrains/widget/user_profile_img.dart';
@@ -27,10 +28,32 @@ class ProfileScreen extends StatelessWidget {
         body: SingleChildScrollView(
           child: Column(
             children: [
+              SizedBox(height: 10),
               StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
                   stream: FirebaseProvider.getUserProfileData(
                       FirebaseProvider.userId),
                   builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Container(
+                        height: 100,
+                        width: mq.width,
+                        child: Column(
+                          children: [
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundColor: UIColors.white,
+                            ),
+                            Text(
+                              '',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: UIColors.black,
+                                  fontSize: 17),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
                     if (snapshot.hasError) {
                       return Container(
                         height: 260,
@@ -80,19 +103,31 @@ class ProfileScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        // decoration: BoxDecoration(
-                        //   color: UIColors.primary,
-                        //   borderRadius: BorderRadius.vertical(
-                        //       bottom: Radius.circular(30)),
-                        // ),
                       );
                     }
-                    return SizedBox();
+                    return Container(
+                      height: 100,
+                      width: mq.width,
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 20,
+                            backgroundColor: UIColors.white,
+                          ),
+                          Text(
+                            'Name',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: UIColors.black,
+                                fontSize: 17),
+                          ),
+                        ],
+                      ),
+                    );
                   }),
               Container(
                 child: Column(
                   children: [
-                    // SizedBox(height: ),
                     MyProfileListTile(
                         onTap: () {
                           Navigator.push(

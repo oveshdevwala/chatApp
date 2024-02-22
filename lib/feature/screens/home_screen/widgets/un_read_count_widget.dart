@@ -23,7 +23,7 @@ class unReadCountWidget extends StatelessWidget {
                     MessageModel.fromDoc(snapshot.data!.docs.first.data());
                 return Text(
                   getFormatedTime(message.sendAt.toString(), context),
-                  style: TextStyle(color: UIColors.greyShade200),
+                  style: TextStyle(color: UIColors.primary),
                 );
               }
               return SizedBox();
@@ -39,7 +39,7 @@ class unReadCountWidget extends StatelessWidget {
                     snapshot.data!.docs.length.toString(),
                     style: TextStyle(color: UIColors.white),
                   ),
-                  backgroundColor: UIColors.blueShade600,
+                  backgroundColor: UIColors.primary,
                 );
               }
               return SizedBox();

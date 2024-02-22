@@ -202,17 +202,10 @@ class FirebaseProvider {
         .set(messageModel.toDoc())
         .then((value) {
       FireNotification.sendPushNotification(user: userModel, message: message);
-      //  fireStore
-      // .collection(userCollection)
-      // .doc('chatedUserId').set({'chatedUserId':userModel.id});
+      fireStore.collection(chatCollation).doc(chatId).set({
+        'ids': [userModel.id, userId]
+      });
     });
-
-    // fireStore
-    //     .collection(userCollection)
-    //     .doc(userId)
-    //     .collection('chateduser')
-    //     .doc(chatId)
-    //     .set({'chatedUser': toId, 'chatId': chatId});
   }
 
   static Stream<DocumentSnapshot<Map<String, dynamic>>> getUserProfileData(
@@ -224,9 +217,6 @@ class FirebaseProvider {
       {required String toId, required String userID}) {
     var chatId = getChatId(fromId: userID, toId: toId);
 
-    fireStore.collection(chatCollation).doc(chatId).set({
-      'ids': [userID, toId]
-    });
     return fireStore
         .collection(chatCollation)
         .doc(chatId)
@@ -236,36 +226,35 @@ class FirebaseProvider {
   }
 
 // Future<List<UserModel>>
-  static Future<List<UserModel>> getAllMesageTest(
-      {String? toId, String? userID}) async {
-    List<UserModel> chatedUserss = [];
-    print('Called But Error in fetch');
-    await fireStore
-        .collection(userCollection)
-        .snapshots()
-        .forEach((event) async {
-      for (var user in event.docs) {
-        var userModel = UserModel.fromDoc(user.data());
-        var chatId = getChatId(fromId: userModel.id!, toId: userId);
-        var chats = await fireStore
-            .collection(chatCollation)
-            .doc(chatId)
-            .collection(messageCollation)
-            .doc()
-            .snapshots()
-            .forEach((element) async {
-          var msgModel = MessageModel.fromDoc(element.data()!);
-          print("MessageId : ${msgModel.fromId}${msgModel.toId}");
-          print("MessageId : Nulll");
-          var userget = await getUserById(msgModel.toId);
-          var userGetModel = UserModel.fromDoc(userget.data()!);
-          chatedUserss.add(userGetModel);
-        });
-      }
-    });
+  // static Future<List<UserModel>> getAllMesageTest(
+  //     {String? toId, String? userID}) async {
+  //   List<UserModel> chatedUserss = [];
 
-    return await chatedUserss;
-  }
+  //   await fireStore
+  //       .collection(userCollection)
+  //       .snapshots()
+  //       .forEach((event) async {
+  //     for (var user in event.docs) {
+  //       var userModel = UserModel.fromDoc(user.data());
+  //       var chatId = getChatId(fromId: userModel.id!, toId: userId);
+  //       await fireStore
+  //           .collection(chatCollation)
+  //           .doc(chatId)
+  //           .collection(messageCollation)
+  //           .doc()
+  //           .snapshots()
+  //           .forEach((element) async {
+  //         var msgModel = MessageModel.fromDoc(element.data()!);
+
+  //         var userget = await getUserById(msgModel.toId);
+  //         var userGetModel = UserModel.fromDoc(userget.data()!);
+  //         chatedUserss.add(userGetModel);
+  //       });
+  //     }
+  //   });
+
+  //   return await chatedUserss;
+  // }
 
   static updateNoticiationStatus({required bool value, required String toId}) {
     fireStore
@@ -385,27 +374,46 @@ class FirebaseProvider {
         .snapshots();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> getAllMesageTest3() {
-    return fireStore.collection(chatCollation).get();
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getUserIds() {
+    return fireStore.collection(chatCollation).snapshots();
   }
-    static Stream<QuerySnapshot<Map<String, dynamic>>> getUserByFromIdAndToId(
-      List<String> chatedIds)  {
 
-    return FirebaseFirestore.instance
-        .collection(userCollection)
-        .where(FieldPath.documentId,whereIn:chatedIds )
-        .snapshots();
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getUserByFromIdAndToId(
+      List<String> userIds) {
+    if (userIds.isEmpty) {
+      return Stream.empty();
+    } else {
+      return FirebaseFirestore.instance
+          .collection(userCollection)
+          .where(FieldPath.documentId, whereIn: userIds, isNotEqualTo: userId)
+          .snapshots();
+    }
   }
+
+  static deleteChatCollation(String toId) async {
+    var chatId = getChatId(fromId: userId, toId: toId);
+    var mainDoc = fireStore.collection(chatCollation).doc(chatId);
+    var subDoc = await mainDoc.collection(messageCollation).get();
+    await mainDoc.delete().then((value) async {
+      for (var docSnap in subDoc.docs) {
+        await docSnap.reference.delete();
+      }
+    });
+  }
+
+  // static List<String> allChatedUserIds() {
+  //   List<String> ChatedUserId = [];
+  //   fireStore.collection(chatCollation).snapshots().listen((snapshot) async {
+  //     for (var chats in await snapshot.docs) {
+  //       var fromId = chats.data()['ids'][0];
+  //       var toId = chats.data()['ids'][1];
+  //       if (fromId == userId) {
+  //         ChatedUserId.add(toId);
+  //       } else if (toId == userId) {
+  //         ChatedUserId.add(fromId);
+  //       }
+  //     }
+  //   });
+  //   return ChatedUserId;
+  // }
 }
-/**   for (var chats in event.docs) {
-        var msgModel = MessageModel.fromDoc(chats.data());
-        if (msgModel.fromId == userId) {
-          userIds.add(msgModel.fromId);
-          print(msgModel.fromId);
-        } else if (msgModel.toId == userId) {
-          userIds.add(msgModel.toId);
-          print(msgModel.toId);
-        } else {
-          print('Ids Not Matched');
-        }
-      } */

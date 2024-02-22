@@ -77,7 +77,7 @@ class NewContactProfileIcon extends StatelessWidget {
               fit: BoxFit.cover,
               child: Icon(
                 CupertinoIcons.person_alt_circle,
-                color: UIColors.black26,
+                color: UIColors.primary,
                 size: MediaQuery.of(context).size.width,
               ))
           : null,

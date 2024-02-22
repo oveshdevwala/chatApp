@@ -10,32 +10,24 @@ class ReadRecipt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return messageModel.readAt == null
-        ? CircleAvatar(
-            backgroundColor: UIColors.greyShade400,
-            radius: 12,
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 1000),
-              curve: Curves.bounceInOut,
-              child: Icon(
-                Icons.done_all_rounded,
-                size: 20,
-                color: UIColors.white,
-                // shadows: [Shadow(color: UIColors.black, blurRadius: 0)],
-              ),
+        ? AnimatedContainer(
+            duration: Duration(milliseconds: 1000),
+            curve: Curves.bounceInOut,
+            child: Icon(
+              Icons.done_all_rounded,
+              size: 20,
+              color: UIColors.grey,
+              // shadows: [Shadow(color: UIColors.black, blurRadius: 0)],
             ),
           )
-        : CircleAvatar(
-            backgroundColor: UIColors.greyShade200,
-            radius: 12,
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 1000),
-              curve: Curves.bounceOut,
-              child: Icon(
-                Icons.done_all_rounded,
-                size: 22,
-                // shadows: [Shadow(color: UIColors.black, blurRadius: 0)],
-                color: UIColors.primary,
-              ),
+        : AnimatedContainer(
+            duration: Duration(milliseconds: 1000),
+            curve: Curves.bounceOut,
+            child: Icon(
+              Icons.done_all_rounded,
+              size: 22,
+              // shadows: [Shadow(color: UIColors.black, blurRadius: 0)],
+              color: UIColors.primary,
             ),
           );
   }

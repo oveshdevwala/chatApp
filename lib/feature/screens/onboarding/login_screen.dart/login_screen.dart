@@ -93,7 +93,14 @@ class LoginScreen extends StatelessWidget {
               Spacer(),
               BlocBuilder<ContryCodeBloc, ContryCodeState>(
                 builder: (context, state) {
-                  if (state is ContryCodeLoadingState) {}
+                  if (state is ContryCodeLoadingState) {
+                    return PrimaryElevatedButton(
+                        myWidget: LinearProgressIndicator(
+                          color: UIColors.white,
+                        ),
+                        btName: 'Wait',
+                        onTap: () {});
+                  }
                   if (state is ContryCodeLoadedState) {
                     return PrimaryElevatedButton(
                         btName: 'Next',

@@ -20,9 +20,6 @@ class MyProfilePictureUpdate extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
         borderRadius: BorderRadius.circular(200),
-        onTap: () {
-        },
-        // child: myProfilePicPRovider(),
         child: provider.cropedFile != null
             ? CircleAvatar(
                 radius: 70,

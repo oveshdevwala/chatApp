@@ -32,11 +32,11 @@ class LeftSideMessages extends StatelessWidget {
                     bottomRight: Radius.circular(12),
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12)),
-                color: UIColors.blueShade50),
+                color: UIColors.greyShade100),
             child: Text(
               msgModel.messsage.trim(),
-              style: TextStyle(
-                  fontWeight: FontWeight.w500, color: UIColors.blueShade400),
+              style:
+                  TextStyle(fontWeight: FontWeight.w500, color: UIColors.black),
             ),
           ),
         ),

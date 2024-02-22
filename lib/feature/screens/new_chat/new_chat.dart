@@ -18,6 +18,7 @@ class NewChatScreen extends StatelessWidget {
       backgroundColor: UIColors.white,
       appBar: newContactAppBar(context),
       body: SafeArea(child: BlocBuilder<NewContactBloc, NewContactState>(
+      
         builder: (context, state) {
           if (state is NewContactLoadingWidget) {
             return NewContactLoadingWidget();

@@ -8,11 +8,13 @@ class PrimaryElevatedButton extends StatelessWidget {
     required this.btName,
     required this.onTap,
     this.bgColor,
+    this.myWidget,
   });
 
   String btName;
   VoidCallback onTap;
   Color? bgColor;
+  Widget? myWidget;
   @override
   Widget build(BuildContext context) {
     // var mq= MediaQuery.of(context).size;
@@ -22,11 +24,11 @@ class PrimaryElevatedButton extends StatelessWidget {
           onPressed: onTap,
           style: ElevatedButton.styleFrom(
               padding: EdgeInsets.all(12),
-              backgroundColor:bgColor?? UIColors.primary,
+              backgroundColor: bgColor ?? UIColors.primary,
               foregroundColor: UIColors.white,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12))),
-          child: Text(
+          child:myWidget ?? Text(
             btName,
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           )),

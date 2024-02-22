@@ -29,7 +29,7 @@ class HomeScreenNavigationBar extends StatelessWidget {
           items: [
             BottomNavigationBarItem(
                 activeIcon: Icon(
-                  CupertinoIcons.chat_bubble_text_fill,
+                  CupertinoIcons.chat_bubble_2_fill,
                   color: UIColors.primary,
                 ),
                 icon: Icon(

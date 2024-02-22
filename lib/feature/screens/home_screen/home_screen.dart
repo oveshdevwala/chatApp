@@ -1,20 +1,17 @@
 // ignore_for_file: must_be_immutable
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_advanced_segment/flutter_advanced_segment.dart';
 import 'package:mangochatapp/constrains/colors.dart';
 import 'package:mangochatapp/datasource/remote/firebase/firebase_provider.dart';
 import 'package:mangochatapp/datasource/remote/firebase_notification_services/push_notification_services.dart';
-import 'package:mangochatapp/feature/models/message_model.dart';
-import 'package:mangochatapp/feature/models/user_model.dart';
+import 'package:mangochatapp/feature/screens/home_screen/widgets/home_screen_appbar.dart';
 import 'package:mangochatapp/feature/screens/home_screen/widgets/home_screen_navigation_bar.dart';
 import 'package:mangochatapp/feature/screens/home_screen/widgets/stream_state_widgets/error_state_chat_list.dart';
-import 'package:mangochatapp/feature/screens/home_screen/widgets/stream_state_widgets/stream_state_chat_list.dart';
 import 'package:mangochatapp/feature/state_manegment/screen_provider.dart';
 import 'package:provider/provider.dart';
-
 import '../profile_manege_screen/account_screen/account_screen.dart';
+import 'widgets/chat_segment.dart';
+import 'widgets/stream_state_widgets/chated_user_loaded_state.dart';
 
 var bottomBarScreens = [HomeScreen(), SizedBox(), SizedBox(), ProfileScreen()];
 
@@ -23,11 +20,9 @@ class AppHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // FirebaseProvider.auth;
-    // FirebaseProvider.userId;
     return Scaffold(
         backgroundColor: UIColors.white,
-        // appBar: HomePageAppBAr(context),
+        appBar: HomePageAppBAr(context),
         bottomNavigationBar: HomeScreenNavigationBar(),
         body: SafeArea(
           child: Consumer<ScreenProvider>(
@@ -44,277 +39,29 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FireNotification.initNotifications();
-    // context.read<HomeScreenChatsBloc>().add(GetHomeChatsEvent());
     return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(height: 20),
-          chatSegment(),
-          Divider(color: UIColors.greyShade200, height: 20),
-          // FutureBuilder<List<UserModel>>(
-          //   future: FirebaseProvider.getAllMesageTest(),
-          //   builder: (context, snapshot) {
-          //     if (snapshot.hasData) {
-          //       if (snapshot.data!.isNotEmpty) {
-          //         return ListView.builder(
-          //           shrinkWrap: true,
-          //           physics: NeverScrollableScrollPhysics(),
-          //           itemCount: snapshot.data!.length,
-          //           itemBuilder: (context, index) {
-          //             return ListTile(
-          //               title: Text(snapshot.data![index].name),
-          //             );
-          //           },
-          //         );
-          //       } else {
-          //         print('Data Is Empty');
-          //       }
-          //     } else if (snapshot.hasError) {
-          //       print('Data ${snapshot.error}');
-          //     }
-
-          //     return LinearProgressIndicator();
-          //   },
-          // )
-
-          ///////////////////////////////////////////////////////////////
-
-          // BlocBuilder<HomeScreenChatsBloc, HomeScreenChatsState>(
-          //   builder: (context, state) {
-          //     if (state is HomeScreenLoadedState) {
-          //       return ListView.builder(
-          //         shrinkWrap: true,
-          //         itemCount: state.getUsers.length,
-          //         physics: NeverScrollableScrollPhysics(),
-          //         itemBuilder: (context, index) {
-          //        if(state.getUsers.isNotEmpty){
-          //             return ListTile(
-          //             title: Text(state.getUsers[index].name),
-          //           );
-          //        }else{
-          //            return ListTile(
-          //             title: Text('No Data Found'),
-          //           );
-          //        }
-          //         },
-          //       );
-          //     }
-          //     if (state is HomeScreenLoadingState) {
-          //       return ListView.builder(
-          //         shrinkWrap: true,
-          //         physics: NeverScrollableScrollPhysics(),
-          //         itemBuilder: (context, index) {
-          //           return ListTile();
-          //         },
-          //       );
-          //     }
-          //     if (state is HomeScreenErrorState) {
-          //       return Center(child: LinearProgressIndicator());
-          //     }
-          //     return ListView.builder(
-          //       shrinkWrap: true,
-          //       physics: NeverScrollableScrollPhysics(),
-          //       itemBuilder: (context, index) {
-          //         ListTile();
-          //         return null;
-          //       },
-          //     );
-          //   },
-          // )
-          FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-            future: FirebaseProvider.getAllMesageTest3(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return ErrorStateChatList(
-                  error: snapshot.error.toString(),
-                );
-              }
-              if (snapshot.hasData) {
-                if (snapshot.data!.docs.isNotEmpty) {
-                  // var datamode=
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: snapshot.data!.docs.length,
-                    itemBuilder: (context, index) {
-                      var fromId = snapshot.data!.docs[index].data()['ids'][0];
-                      var toId = snapshot.data!.docs[index].data()['ids'][1];
-
-                      List<String> ChatedUserId = [];
-                      if (fromId == FirebaseProvider.userId) {
-                        ChatedUserId.add(toId);
-                      }
-                      if (toId == FirebaseProvider.userId) {
-                        ChatedUserId.add(fromId);
-                      }
-                      return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                          stream: FirebaseProvider.getUserByFromIdAndToId(
-                              ChatedUserId),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return ListView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: snapshot.data!.docs.length,
-                                itemBuilder: (context, index) {
-                                  var userModel = UserModel.fromDoc(
-                                      snapshot.data!.docs[index].data());
-                                  return ListTile(
-                                    title: Text(userModel.name),
-                                    subtitle: Text(userModel.mobileNumber!),
-                                  );
-                                },
-                              );
-                            } else if (snapshot.hasError) {
-                              return Center(child: LinearProgressIndicator());
-                            }
-                            return CircularProgressIndicator();
-                          });
-                    },
-                  );
-                } else {
-                  return ListTile(
-                    title: Text('No Data Found'),
-                  );
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            chatSegment(),
+            StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+              stream: FirebaseProvider.getUserIds(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                } else if (snapshot.hasError) {
+                  return ErrorStateChatList(error: snapshot.error.toString());
+                } else if (snapshot.hasData) {
+                  if (snapshot.data!.docs.isNotEmpty) {
+                    return ChatedUserLoadedState(snapshot: snapshot);
+                  }
                 }
-              }
-              return SizedBox();
-            },
-          )
-        ],
-      ),
-    );
-  }
-}
-
-/**   StreamBuilder<QuerySnapshot<Map<String, dynamic>>> (
-            stream: FirebaseProvider.getAllMesageTest2(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return ErrorStateChatList(
-                  error: snapshot.error.toString(),
-                );
-              }
-              if (snapshot.hasData) {
-                if (snapshot.data!.docs.isNotEmpty) {
-                  return StreamStateChatList(
-                    snapshot: snapshot,
-                  );
-                } else {
-                 return ListTile(
-                    title: Text('No Data Found'),
-                  );
-                }
-              }
-              return SizedBox();
-            },
-          ) */
-class chatSegment extends StatelessWidget {
-  const chatSegment({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Card(
-        color: UIColors.greyShade100,
-        surfaceTintColor: UIColors.greyShade100,
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: EdgeInsets.all(8),
-          child: AdvancedSegment(
-            itemPadding: EdgeInsets.symmetric(horizontal: 42, vertical: 10),
-            backgroundColor: UIColors.greyShade100,
-            sliderColor: UIColors.primary,
-            sliderOffset: 0.1,
-            inactiveStyle:
-                TextStyle(fontWeight: FontWeight.bold, color: UIColors.primary),
-            activeStyle: TextStyle(
-              color: UIColors.white,
-              fontWeight: FontWeight.bold,
-            ),
-            segments: {'personal': 'Personal', 'group': 'Group'},
-            controller: ValueNotifier('personal'),
-          ),
+                return SizedBox();
+              },
+            )
+          ],
         ),
-      ),
-    );
-  }
-}
-
-class myTabBar extends StatefulWidget {
-  const myTabBar({
-    super.key,
-  });
-
-  @override
-  State<myTabBar> createState() => _myTabBarState();
-}
-
-class _myTabBarState extends State<myTabBar>
-    with SingleTickerProviderStateMixin {
-  late TabController tabContoller;
-  @override
-  void initState() {
-    super.initState();
-
-    tabContoller = TabController(length: 2, vsync: this, initialIndex: 0);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Container(
-        decoration: BoxDecoration(
-            color: UIColors.greyShade200,
-            borderRadius: BorderRadius.circular(12)),
-        child: TabBar(
-            splashBorderRadius: BorderRadius.circular(12),
-            // labelColor: Colors.transparent,
-            indicatorSize: TabBarIndicatorSize.label,
-
-            // indicatorColor: Colors.transparent,
-            onTap: (value) {
-              tabContoller.animateTo(value);
-            },
-            controller: tabContoller,
-            tabs: [
-              Tab(
-                text: 'Personal',
-                height: 60,
-                child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    decoration: BoxDecoration(
-                        color: UIColors.primary,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Text(
-                      'Personal',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: UIColors.white,
-                          fontSize: 20),
-                    )),
-              ),
-              Tab(
-                height: 60,
-                child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    decoration: BoxDecoration(
-                        color: UIColors.primary,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Text(
-                      'Group',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: UIColors.white,
-                          fontSize: 20),
-                    )),
-              ),
-            ]),
       ),
     );
   }
