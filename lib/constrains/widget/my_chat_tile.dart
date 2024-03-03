@@ -1,6 +1,6 @@
 // ignore_for_file: must_be_immutable
 import 'package:flutter/material.dart';
-import 'package:mangochatapp/constrains/colors.dart';
+import 'package:mangochatapp/features/app/theme/colors_styles.dart';
 
 class MyChatTile extends StatelessWidget {
   MyChatTile({
@@ -13,7 +13,7 @@ class MyChatTile extends StatelessWidget {
     this.profile,
     // this.time,
     required this.onTap,
-     this.onLongPress,
+    this.onLongPress,
   });
   String userName;
   Widget? lastMsg;

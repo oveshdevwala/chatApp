@@ -47,5 +47,11 @@
 	<true/>
 	<key>NSContactsUsageDescription</key>
     <string>Reason we need access to the contact list</string>
+	<key>NSCameraUsageDescription</key>
+    <string>Camera Library Use</string>
+	<key>NSMicrophoneUsageDescription</key>
+    <string>Mic Use</string>
+
+
 </dict>
 </plist>

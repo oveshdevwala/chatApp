@@ -2,8 +2,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mangochatapp/constrains/colors.dart';
-import 'package:mangochatapp/feature/models/user_model.dart';
+import 'package:mangochatapp/features/app/theme/colors_styles.dart';
+import 'package:mangochatapp/features/models/user_model.dart';
 
 class UserProfileIMG extends StatelessWidget {
   UserProfileIMG({

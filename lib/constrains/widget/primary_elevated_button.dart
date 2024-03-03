@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mangochatapp/constrains/colors.dart';
+import 'package:mangochatapp/features/app/theme/colors_styles.dart';
 
 // ignore: must_be_immutable
 class PrimaryElevatedButton extends StatelessWidget {
@@ -28,10 +28,11 @@ class PrimaryElevatedButton extends StatelessWidget {
               foregroundColor: UIColors.white,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12))),
-          child:myWidget ?? Text(
-            btName,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-          )),
+          child: myWidget ??
+              Text(
+                btName,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              )),
     );
   }
 }

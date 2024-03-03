@@ -1,7 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'package:mangochatapp/constrains/colors.dart';
+import 'package:mangochatapp/features/app/theme/colors_styles.dart';
 // import 'package:mangochatapp/constrains/colors.dart';
 
 class MyContactTileRow extends StatelessWidget {
