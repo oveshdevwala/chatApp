@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart';
 import 'package:mangochatapp/data/datasource/remote/firebase/firebase_provider.dart';
-import 'package:mangochatapp/features/models/user_model.dart';
+import 'package:mangochatapp/features/chats/model/user_model.dart';
 
 class FireNotification {
   static String? fCMToken;

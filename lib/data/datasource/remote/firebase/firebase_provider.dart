@@ -4,27 +4,27 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:mangochatapp/features/onboarding/screen/otp_screen.dart';
 import 'package:mangochatapp/routes/page_routes.dart';
-import 'package:mangochatapp/features/app/global/entities/variables.dart';
+import 'package:mangochatapp/app/global/entities/variables.dart';
 import 'package:mangochatapp/data/datasource/remote/firebase_notification_services/push_notification_services.dart';
-import 'package:mangochatapp/features/models/call_model.dart';
-import 'package:mangochatapp/features/models/message_model.dart';
-import 'package:mangochatapp/features/models/user_model.dart';
-import 'package:mangochatapp/features/screens/call/call_screen.dart';
-import 'package:mangochatapp/features/user/presentation/screen/otp_screen.dart';
+import 'package:mangochatapp/features/chats/model/message_model.dart';
+import 'package:mangochatapp/features/chats/model/user_model.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart';
 
 class FirebaseProvider {
   static final fireStore = FirebaseFirestore.instance;
   static final auth = FirebaseAuth.instance;
+  final auth2 = FirebaseAuth.instance;
   static final storage = FirebaseStorage.instance.ref();
   static final phoneAuth = PhoneAuthProvider;
 
   static final userCollection = 'users';
   static final chatCollation = 'chats';
   static final messageCollation = 'messages';
+  static final callCollection = 'call';
+  static final callHistoryCollation = 'callHistory';
   static String userId = auth.currentUser!.uid;
 
   verifyPhoneNumber(
@@ -51,8 +51,8 @@ class FirebaseProvider {
     } on FirebaseAuthException catch (e) {
       throw Exception(e);
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error : $e')));
+      // ScaffoldMessenger.of(context)
+      //     .showSnackBar(SnackBar(content: Text('Error : $e')));
       throw Exception(e);
     }
   }
@@ -93,7 +93,6 @@ class FirebaseProvider {
         }
         var prefs = await SharedPreferences.getInstance();
         prefs.setString(LoginPrefKey, uId);
-
         Navigator.pushReplacementNamed(context, AppRoutes.welcomeScreen);
       });
     } on FirebaseAuthException catch (e) {
@@ -179,7 +178,11 @@ class FirebaseProvider {
       String fileUrl = await value.ref.getDownloadURL();
 
       var messageModel = MessageModel(
-        messsage: '',
+        messsage: imageMsg
+            ? 'Image'
+            : videoMsg
+                ? 'Video'
+                : '',
         sendAt: currentTime,
         messageId: currentTime.toString(),
         fromId: userId,
@@ -366,86 +369,7 @@ class FirebaseProvider {
       }
     });
   }
-
-  static makeCall(
-      {required UserModel receiverUserModel,
-      required BuildContext context}) async {
-    try {
-      var userData = await getUserById(userId);
-      var senderUsermodel = await UserModel.fromDoc(userData.data()!);
-
-      var callId = await Uuid().v1();
-      CallModel senderCallData = await CallModel(
-          callerId: senderUsermodel.id!,
-          callerName: senderUsermodel.name,
-          callerPic: senderUsermodel.profilePic!,
-          receiverId: receiverUserModel.id ?? 'your Id not Found',
-          receiverName: receiverUserModel.name,
-          receiverPic: receiverUserModel.profilePic ?? '',
-          callId: callId,
-          hasDialled: true);
-
-      CallModel receiverCallData = await CallModel(
-          callerId: senderUsermodel.id!,
-          callerName: senderUsermodel.name,
-          callerPic: senderUsermodel.profilePic!,
-          receiverId: receiverUserModel.id ?? ' user Id not Found',
-          receiverName: receiverUserModel.name,
-          receiverPic: receiverUserModel.profilePic ?? '',
-          callId: callId,
-          hasDialled: false);
-      await fireStore
-          .collection('call')
-          .doc(receiverUserModel.id)
-          .set(receiverCallData.toMap());
-      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      //     content: Text(
-      //         'receiverId ${receiverUserModel.id} SenderId ${senderUsermodel.id}')));
-      await fireStore
-          .collection('call')
-          .doc(senderUsermodel.id)
-          .set(senderCallData.toMap());
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CallScreen(
-              receiverId: receiverUserModel.id!,
-              callId: callId,
-            ),
-          ));
-      //  Navigator.push(
-      //     context,
-      //     MaterialPageRoute(
-      //       builder: (context) => CallScreen(
-      //         callModel: senderCallData,
-      //         channelId: callId,
-      //       ),
-      //     ));
-    } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
-    }
-  }
-
-  static deleteCall(
-      {required String receiverId,
-      required String senderId,
-      required BuildContext context}) async {
-    try {
-      await fireStore.collection('call').doc(receiverId).delete();
-      await fireStore.collection('call').doc(senderId).delete();
-    } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
-    }
-  }
-
-  static Stream<DocumentSnapshot<Map<String, dynamic>>> callStream() {
-    return fireStore.collection('call').doc(userId).snapshots();
-  }
 }
-
-
 /**
  
   createUser({
@@ -495,3 +419,4 @@ class FirebaseProvider {
     }
   } 
  */
+

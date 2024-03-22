@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:mangochatapp/features/app/splash/splash_screen.dart';
-import 'package:mangochatapp/features/chat/presentation/pages/chat_screen.dart';
-import 'package:mangochatapp/features/user/presentation/screen/login_screen.dart';
-import '../features/screens/new_chat/new_chat.dart';
-import '../features/screens/profile_manege_screen/account_screen/account_screen.dart';
-import '../features/app/home/app_home.dart';
-import '../features/app/landing/welcome_screen.dart';
-
+import 'package:mangochatapp/features/chats/screen/chat_screen/chat_screen.dart';
+import 'package:mangochatapp/features/onboarding/screen/login_screen.dart';
+import 'package:mangochatapp/features/onboarding/screen/splash_screen.dart';
+import 'package:mangochatapp/features/onboarding/screen/welcome_screen.dart';
+import '../features/chats/screen/new_chat/new_chat.dart';
+import '../features/account/screen/account_screen/account_screen.dart';
+import '../features/home/app_home.dart';
 //
 class AppRoutes {
   static const String splashScreen = '/splash_screen';
