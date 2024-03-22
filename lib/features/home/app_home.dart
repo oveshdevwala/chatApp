@@ -20,15 +20,8 @@ class AppHome extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: UIColors.white,
-        // appBar: HomePageAppBAr(context),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          backgroundColor: UIColors.primary,
-          child: Icon(
-            CupertinoIcons.add,
-            color: UIColors.white,
-          ),
-        ),
+       
+     
         bottomNavigationBar: HomeScreenNavigationBar(),
         body: SafeArea(
           child: Consumer<ScreenProvider>(

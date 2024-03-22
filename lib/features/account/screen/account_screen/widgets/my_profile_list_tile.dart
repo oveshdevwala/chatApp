@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:mangochatapp/app/theme/colors_styles.dart';
-import 'package:mangochatapp/features/account/screen/comming_soon.dart';
 
 class MyProfileListTile extends StatelessWidget {
   MyProfileListTile({
@@ -32,14 +31,7 @@ class MyProfileListTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
       child: ListTile(
-        onTap: onTap ??
-            () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CommingSoonScreen(),
-                  ));
-            },
+        onTap: onTap,
         tileColor: UIColors.greyShade200,
         contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
         shape: RoundedRectangleBorder(

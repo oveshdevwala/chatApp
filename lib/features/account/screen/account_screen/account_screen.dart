@@ -139,16 +139,6 @@ class ProfileScreen extends StatelessWidget {
                         subTitle: 'Email, Name, Profile Pic',
                         trailingIcon: Icons.chevron_right_rounded),
                     MyProfileListTile(
-                        leadingIcon: CupertinoIcons.settings_solid,
-                        title: "Setting",
-                        subTitle: 'Privacy, Chat, Status',
-                        trailingIcon: Icons.chevron_right_rounded),
-                    MyProfileListTile(
-                        leadingIcon: CupertinoIcons.archivebox,
-                        title: "Archived",
-                        subTitle: 'Hided Contacts',
-                        trailingIcon: Icons.chevron_right_rounded),
-                    MyProfileListTile(
                         onTap: () {
                           Navigator.push(
                               context,
@@ -158,16 +148,6 @@ class ProfileScreen extends StatelessWidget {
                         leadingIcon: CupertinoIcons.person_add,
                         title: "New Chat",
                         subTitle: 'Find Number User',
-                        trailingIcon: Icons.chevron_right_rounded),
-                    MyProfileListTile(
-                        leadingIcon: CupertinoIcons.bell,
-                        title: "Notification",
-                        subTitle: 'Message, Group, Call',
-                        trailingIcon: Icons.chevron_right_rounded),
-                    MyProfileListTile(
-                        leadingIcon: Icons.info_outline_rounded,
-                        title: "Contact Us",
-                        subTitle: 'Suggestions & Feedback',
                         trailingIcon: Icons.chevron_right_rounded),
                     MyLogoutButtonTile()
                   ],
